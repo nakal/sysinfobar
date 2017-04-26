@@ -29,12 +29,26 @@ impl Xmobar {
         };
         symb + &minutes
     }
+
+    fn cpu_color(load: u32, ncpus: u32) -> &'static str {
+
+        let abs = load * ncpus;
+
+        match abs {
+            0...499     => COLOR_NORMAL,
+            500...699   => COLOR_MEDIUM,
+            700...899   => COLOR_WARNING,
+            _           => COLOR_CRITICAL,
+        }
+    }
 }
 
 impl Output for Xmobar {
     fn refresh(status_data: &StatusData) {
-        println!("<fc={}>|</fc> {}<fc={}>|</fc> <fc={}>{}</fc>",
+        println!("<fc={}>|</fc> <fc={}>CPU:{:3}%</fc> {}<fc={}>|</fc> <fc={}>{}</fc>",
                COLOR_INACTIVE,
+               Xmobar::cpu_color(status_data.load, status_data.cpus),
+               (status_data.load + 5) / 10,
                Xmobar::out_battery(&status_data.power_info),
                COLOR_INACTIVE,
                COLOR_ACTIVE,
