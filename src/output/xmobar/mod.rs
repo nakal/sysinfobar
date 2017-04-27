@@ -31,29 +31,51 @@ impl Xmobar {
     }
 
     fn cpu_color(load: u32, ncpus: u32) -> &'static str {
-
         let abs = load * ncpus;
 
         match abs {
-            0...499     => COLOR_NORMAL,
-            500...699   => COLOR_MEDIUM,
-            700...899   => COLOR_WARNING,
-            _           => COLOR_CRITICAL,
+            0...49  => COLOR_NORMAL,
+            50...69 => COLOR_MEDIUM,
+            70...89 => COLOR_WARNING,
+            _       => COLOR_CRITICAL,
+        }
+    }
+
+    fn mem_color(perc: u32) -> &'static str {
+        match perc {
+            0...49  => COLOR_NORMAL,
+            50...69 => COLOR_MEDIUM,
+            70...89 => COLOR_WARNING,
+            _       => COLOR_CRITICAL,
+        }
+    }
+
+    fn swp_color(perc: u32) -> &'static str {
+        match perc {
+            0...4   => COLOR_NORMAL,
+            5...19  => COLOR_MEDIUM,
+            20...49 => COLOR_WARNING,
+            _       => COLOR_CRITICAL,
         }
     }
 }
 
 impl Output for Xmobar {
     fn refresh(status_data: &StatusData) {
-        println!("<fc={}>|</fc> <fc={}>CPU:{:3}%</fc> {}<fc={}>|</fc> <fc={}>{}</fc>",
-               COLOR_INACTIVE,
-               Xmobar::cpu_color(status_data.load, status_data.cpus),
-               (status_data.load + 5) / 10,
-               Xmobar::out_battery(&status_data.power_info),
-               COLOR_INACTIVE,
-               COLOR_ACTIVE,
-               status_data.time
-               );
+        println!("<fc={}>|</fc> <fc={}>CPU:{:3}%</fc> <fc={}>MEM:{:3}%</fc> \
+                 <fc={}>SWP:{:3}%</fc> {}<fc={}>|</fc> <fc={}>{}</fc>",
+                 COLOR_INACTIVE,
+                 Xmobar::cpu_color(status_data.load, status_data.cpus),
+                 status_data.load,
+                 Xmobar::mem_color(status_data.memused),
+                 status_data.memused,
+                 Xmobar::swp_color(status_data.swpused),
+                 status_data.swpused,
+                 Xmobar::out_battery(&status_data.power_info),
+                 COLOR_INACTIVE,
+                 COLOR_ACTIVE,
+                 status_data.time
+                );
         io::stdout().flush().unwrap();
     }
 }

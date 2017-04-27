@@ -7,6 +7,8 @@ pub struct StatusData {
     pub time: String,
     pub load: u32,
     pub cpus: u32,
+    pub memused: u32,
+    pub swpused: u32,
 }
 
 pub trait Output {

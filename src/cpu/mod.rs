@@ -7,7 +7,6 @@ use std::mem;
 const CPUSTATES: usize = 5;
 
 #[repr(C,packed)]
-#[derive(Debug)]
 pub struct CPUInfo {
     pub state: [isize; CPUSTATES],
 }
@@ -23,13 +22,12 @@ impl CPUInfo {
         let mut mib: [libc::c_int; 2] = [ libc::CTL_KERN, libc::KERN_CPTIME ];
         let mut info = CPUInfo::new();
         let buf: *mut c_void = info.state.as_mut_ptr() as *mut c_void;
-        let mut size = mem::size_of::<isize>() * CPUSTATES as size_t;
+        let mut size = mem::size_of::<CPUInfo>() as size_t;
         let outbuf: *mut c_void = ptr::null_mut() as *mut c_void;
         unsafe {
             libc::sysctl(&mut mib[0], 2, buf,
                          &mut size, outbuf, 0);
         }
-        // println!("CPUINFO: {:?}", info);
         info
     }
 
@@ -47,7 +45,6 @@ impl CPUInfo {
             sum += diff[i];
         }
         if sum == 0 { sum += 1 }
-        (((sum - diff[CPUSTATES - 1]) * 1000) / sum) as u32
+        (((sum - diff[CPUSTATES - 1]) * 100) / sum) as u32
     }
 }
-
