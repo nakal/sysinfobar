@@ -23,9 +23,9 @@ impl Xmobar {
             81...100 => format!("<fc={}>[||']=</fc> ", COLOR_NORMAL),
             _        => String::new(),
         };
-        let minutes = match pow.battery_life {
-            0...100 => format!("{}min ", pow.minutes_left),
-            _       => String::new(),
+        let minutes = match pow.ac_state {
+            0 => format!("{}min ", pow.minutes_left),
+            _ => String::from("chg "),
         };
         symb + &minutes
     }
