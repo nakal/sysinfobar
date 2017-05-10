@@ -13,6 +13,10 @@ pub struct Xmobar {
 
 impl Xmobar {
     fn out_battery(pow: &PowerInfo) -> String {
+        let sep = match pow.battery_life {
+            0...100 => format!("<fc={}>|</fc> ", COLOR_INACTIVE),
+            _       => String::new(),
+        };
         let symb = match pow.battery_life {
             0...10   => format!("<fc={}>[ ! ]=</fc> ", COLOR_CRITICAL),
             11...25  => format!("<fc={}>['  ]=</fc> ", COLOR_WARNING),
@@ -24,10 +28,10 @@ impl Xmobar {
             _        => String::new(),
         };
         let minutes = match pow.ac_state {
-            0 => format!("{}min ", pow.minutes_left),
+            0 => format!("{:3}min ", pow.minutes_left),
             _ => String::from("chg "),
         };
-        symb + &minutes
+        sep + &symb + &minutes
     }
 
     fn cpu_color(load: u32, ncpus: u32) -> &'static str {
@@ -58,19 +62,37 @@ impl Xmobar {
             _       => COLOR_CRITICAL,
         }
     }
+
+    fn net_color(perc: u32) -> &'static str {
+        match perc {
+            0...29  => COLOR_NORMAL,
+            30...59 => COLOR_MEDIUM,
+            60...89 => COLOR_WARNING,
+            _       => COLOR_CRITICAL,
+        }
+    }
+
 }
 
 impl Output for Xmobar {
     fn refresh(status_data: &StatusData) {
-        println!("<fc={}>|</fc> <fc={}>CPU:{:3}%</fc> <fc={}>MEM:{:3}%</fc> \
-                 <fc={}>SWP:{:3}%</fc> {}<fc={}>|</fc> <fc={}>{}</fc>",
+        println!("<fc={}>|</fc> <fc={}>CPU:{:3}%</fc> <fc={}>|</fc> \
+                 <fc={}>MEM:{:3}%</fc> <fc={}>SWP:{:3}%</fc> <fc={}>|</fc> \
+                 <fc={}>RX:{:3}%</fc> <fc={}>TX:{:3}%</fc> {}<fc={}>|</fc> \
+                 <fc={}>{}</fc>",
                  COLOR_INACTIVE,
                  Xmobar::cpu_color(status_data.load, status_data.cpus),
                  status_data.load,
+                 COLOR_INACTIVE,
                  Xmobar::mem_color(status_data.memused),
                  status_data.memused,
                  Xmobar::swp_color(status_data.swpused),
                  status_data.swpused,
+                 COLOR_INACTIVE,
+                 Xmobar::net_color(status_data.net_rx),
+                 status_data.net_rx,
+                 Xmobar::net_color(status_data.net_tx),
+                 status_data.net_tx,
                  Xmobar::out_battery(&status_data.power_info),
                  COLOR_INACTIVE,
                  COLOR_ACTIVE,

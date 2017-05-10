@@ -9,6 +9,7 @@ information to stdout in a format that is expected to be piped to
 * CPU usage in percent
 * RAM usage in percent
 * swap usage in percent
+* network usage down/up in percent
 * battery capacity as symbol and in minutes left (if available)
 * date and time (currently only in German)
 
