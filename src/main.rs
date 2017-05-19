@@ -1,12 +1,9 @@
-mod battery;
-mod time;
-mod cpu;
-mod mem;
-mod net;
+mod sensors;
 mod output;
 
 use output::xmobar::{Xmobar};
 use output::Output;
+use sensors::*;
 
 fn main() {
     let ncpus = cpu::CPUInfo::ncpus();

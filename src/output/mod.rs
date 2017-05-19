@@ -1,6 +1,5 @@
 pub mod xmobar;
-pub use super::battery::{PowerInfo};
-pub use super::cpu::{CPUInfo};
+use sensors::battery::{PowerInfo};
 
 pub struct StatusData {
     pub power_info: PowerInfo,
