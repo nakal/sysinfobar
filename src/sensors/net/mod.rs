@@ -6,6 +6,29 @@ use std::cmp;
 
 const INTERVAL: u64 = 5;
 
+macro_rules! constants_for_system {
+    ( $s:expr => $(const $l:ident: $t:ty = $e:expr);*; ) =>
+    {
+        $(
+        #[cfg(target_os = $s)]
+        const $l : $t = $e
+        );*;
+    }
+}
+
+constants_for_system!("openbsd" =>
+                      const NETSTAT_COLUMNS: usize = 2;
+                      const NETSTAT_COLUMN_RX: usize = 2;
+                      const NETSTAT_COLUMN_TX: usize = 1;
+                     );
+
+constants_for_system!("freebsd" =>
+                      const NETSTAT_COLUMNS: usize = 8;
+                      const NETSTAT_COLUMN_RX: usize = 5;
+                      const NETSTAT_COLUMN_TX: usize = 2;
+                     );
+
+
 pub struct NetStat {
     rx: u64,
     tx: u64,
@@ -45,13 +68,13 @@ impl NetStat {
             let s = String::from_utf8(buf).unwrap();
             let words: Vec<&str> = s.split_whitespace().collect();
             let wc = words.len();
-            if wc >= 2 {
+            if wc >= NETSTAT_COLUMNS {
                 let mut n = netstat.lock().unwrap();
-                if let Ok(newrx) = words[wc - 2].parse::<u64>() {
+                if let Ok(newrx) = words[wc - NETSTAT_COLUMN_RX].parse::<u64>() {
                     n.rx = newrx / INTERVAL;
                     n.rx_max = cmp::max(n.rx, n.rx_max);
                 }
-                if let Ok(newtx) = words[wc - 1].parse::<u64>() {
+                if let Ok(newtx) = words[wc - NETSTAT_COLUMN_TX].parse::<u64>() {
                     n.tx = newtx / INTERVAL;
                     n.tx_max = cmp::max(n.tx, n.tx_max);
                 }
