@@ -1,6 +1,8 @@
 extern crate libc;
 
-use self::libc::{size_t, c_void, c_int, c_uint, c_char};
+use self::libc::{size_t, c_void, c_int, c_uint};
+#[cfg(target_os = "freebsd")]
+use self::libc::{c_char};
 use std::ptr;
 use std::mem;
 
