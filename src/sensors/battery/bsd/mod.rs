@@ -1,6 +1,5 @@
 extern crate libc;
 use std::ffi::{CString};
-use self::libc::{c_uchar,c_uint};
 use super::PowerInfo;
 
 impl PowerInfo {
