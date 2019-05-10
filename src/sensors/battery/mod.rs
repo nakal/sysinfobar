@@ -24,6 +24,7 @@ pub struct PowerInfo {
     pub ac_state: c_uchar,
     pub battery_life: c_uchar,
     spare1: c_uchar,
+    pub supports_time: bool,
     pub minutes_left: c_uint,
     spare2: [c_uint; 6],
 }

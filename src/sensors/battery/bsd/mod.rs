@@ -8,6 +8,7 @@ impl PowerInfo {
             battery_powered: false,
             battery_state: 0,
             ac_state: 0,
+            supports_time: true,
             battery_life: 0,
             spare1: 0,
             minutes_left: 0,
