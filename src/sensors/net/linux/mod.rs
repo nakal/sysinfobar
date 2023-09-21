@@ -1,4 +1,7 @@
-use std::sync::{Arc, Mutex};
+use std::cmp;
+use std::fs;
+
+const INTERVAL: u64 = 1;
 
 pub struct NetStat {
     rx: u64,
@@ -8,18 +11,55 @@ pub struct NetStat {
 }
 
 impl NetStat {
-    pub fn open() -> Arc<Mutex<NetStat>> {
-        let netstat = Arc::new(Mutex::new(
-                NetStat { rx: 0, tx: 0, rx_max: 1, tx_max: 1 }
-                ));
-        netstat.clone()
+
+    pub fn open() -> NetStat {
+        let mut ns = NetStat { rx: 0, tx: 0, rx_max: 1, tx_max: 1 };
+        let (rxv, txv) = NetStat::read_step(& mut ns);
+        NetStat { rx: rxv, tx: txv, rx_max: 1, tx_max: 1 }
     }
 
-    pub fn fetch(netstat: &Arc<Mutex<NetStat>>) -> (u32, u32) {
-        let n = netstat.lock().unwrap();
+    fn read_step(oldns: & mut NetStat) -> (u64, u64) {
+        let contents = fs::read_to_string("/proc/net/netstat")
+                    .expect("Cannot access /proc/net/netstat");
+
+        let mut newrx: u64 = 0;
+        let mut newtx: u64 = 0;
+
+        for line in contents.lines() {
+            let v: Vec<&str> = line.split_whitespace().collect();
+            if v[0].eq("IpExt:") {
+                let rx = match v[7].parse::<u64>() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let tx = match v[8].parse::<u64>() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                newrx = rx;
+                newtx = tx;
+                break;
+            }
+        }
+
+        let diffrx = (newrx - oldns.rx) / INTERVAL;
+        let difftx = (newtx - oldns.tx) / INTERVAL;
+
+        *oldns = NetStat {
+            rx: newrx,
+            tx: newtx,
+            rx_max: cmp::max(diffrx, oldns.rx_max),
+            tx_max: cmp::max(difftx, oldns.tx_max),
+        };
+
+        (diffrx, difftx)
+    }
+
+    pub fn fetch(n: & mut NetStat) -> (u32, u32) {
+        let (rx, tx) = NetStat::read_step(n);
         (
-            (n.rx * 100 / n.rx_max) as u32,
-            (n.tx * 100 / n.tx_max) as u32
+            (rx * 100 / n.rx_max) as u32,
+            (tx * 100 / n.tx_max) as u32
         )
     }
 }
