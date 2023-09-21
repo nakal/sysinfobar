@@ -10,7 +10,7 @@ information to stdout in a format that is expected to be piped to
 
 ![Screenshot of sysinfobar using FontAwesome](doc/img/sysinfobar-fontawesome.png)
 
-See [how to compile](#With FontAwesome support) and [configuration below](#Example configuration for xmobar).
+See [how to compile](#with-fontawesome-support) and [configuration below](#example-configuration-for-xmobar).
 
 ### Simple view
 
