@@ -17,17 +17,17 @@ impl Xmobar {
             String::new()
         } else {
             let sep = match pow.battery_life {
-                0...100 => format!("<fc={}>|</fc> ", COLOR_INACTIVE),
+                0..=100 => format!("<fc={}>|</fc> ", COLOR_INACTIVE),
                 _       => String::new(),
             };
             let symb = match pow.battery_life {
-                0...10   => format!("<fc={}>[ ! ]=</fc> ", COLOR_CRITICAL),
-                11...25  => format!("<fc={}>['  ]=</fc> ", COLOR_WARNING),
-                26...33  => format!("<fc={}>[|  ]=</fc> ", COLOR_WARNING),
-                34...50  => format!("<fc={}>[|' ]=</fc> ", COLOR_MEDIUM),
-                51...66  => format!("<fc={}>[|| ]=</fc> ", COLOR_NORMAL),
-                67...80  => format!("<fc={}>[||']=</fc> ", COLOR_NORMAL),
-                81...100 => format!("<fc={}>[||']=</fc> ", COLOR_NORMAL),
+                0..=10   => format!("<fc={}>[ ! ]=</fc> ", COLOR_CRITICAL),
+                11..=25  => format!("<fc={}>['  ]=</fc> ", COLOR_WARNING),
+                26..=33  => format!("<fc={}>[|  ]=</fc> ", COLOR_WARNING),
+                34..=50  => format!("<fc={}>[|' ]=</fc> ", COLOR_MEDIUM),
+                51..=66  => format!("<fc={}>[|| ]=</fc> ", COLOR_NORMAL),
+                67..=80  => format!("<fc={}>[||']=</fc> ", COLOR_NORMAL),
+                81..=100 => format!("<fc={}>[||']=</fc> ", COLOR_NORMAL),
                 _        => String::new(),
             };
             let left = match pow.ac_state {
@@ -46,36 +46,36 @@ impl Xmobar {
         let abs = load * ncpus;
 
         match abs {
-            0...49  => COLOR_NORMAL,
-            50...69 => COLOR_MEDIUM,
-            70...89 => COLOR_WARNING,
+            0..=49  => COLOR_NORMAL,
+            50..=69 => COLOR_MEDIUM,
+            70..=89 => COLOR_WARNING,
             _       => COLOR_CRITICAL,
         }
     }
 
     fn mem_color(perc: u32) -> &'static str {
         match perc {
-            0...49  => COLOR_NORMAL,
-            50...69 => COLOR_MEDIUM,
-            70...89 => COLOR_WARNING,
+            0..=49  => COLOR_NORMAL,
+            50..=69 => COLOR_MEDIUM,
+            70..=89 => COLOR_WARNING,
             _       => COLOR_CRITICAL,
         }
     }
 
     fn swp_color(perc: u32) -> &'static str {
         match perc {
-            0...4   => COLOR_NORMAL,
-            5...19  => COLOR_MEDIUM,
-            20...49 => COLOR_WARNING,
+            0..=4   => COLOR_NORMAL,
+            5..=19  => COLOR_MEDIUM,
+            20..=49 => COLOR_WARNING,
             _       => COLOR_CRITICAL,
         }
     }
 
     fn net_color(perc: u32) -> &'static str {
         match perc {
-            0...29  => COLOR_NORMAL,
-            30...59 => COLOR_MEDIUM,
-            60...89 => COLOR_WARNING,
+            0..=29  => COLOR_NORMAL,
+            30..=59 => COLOR_MEDIUM,
+            60..=89 => COLOR_WARNING,
             _       => COLOR_CRITICAL,
         }
     }

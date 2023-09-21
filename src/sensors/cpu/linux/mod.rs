@@ -58,7 +58,7 @@ impl CPUInfo {
         let idle = self.state[3] - old.state[3];
         if sum > 0 {
             match (100 * (sum - idle) / sum) as u32 {
-                x @ 0...100 => x,
+                x @ 0..=100 => x,
                 _ => 0,
             }
         } else {

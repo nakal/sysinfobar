@@ -13,5 +13,5 @@ pub struct StatusData {
 }
 
 pub trait Output {
-    fn refresh(&StatusData);
+    fn refresh(status_data: &StatusData);
 }
