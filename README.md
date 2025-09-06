@@ -1,5 +1,8 @@
 # sysinfobar
 
+| Repository moved to: `https://codeberg.org/nakal/sysinfobar` |
+|---|
+
 `sysinfobar` is a simple program that outputs Linux or OpenBSD system
 information to stdout in a format that is expected to be piped to
 [Xmobar](http://projects.haskell.org/xmobar/).
